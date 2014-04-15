@@ -3,7 +3,7 @@ using CommandLine.Text;
 
 namespace RabbitHoleNode.Node
 {
-	static class NodeRunner
+	public static class NodeRunner
 	{
 		public static void RunNode(string[] args)
 		{

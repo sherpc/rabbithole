@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30219.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitHoleNode", "RabbitHoleNode\RabbitHoleNode.csproj", "{4F0CE8B6-E7AB-4F9A-934A-E8869F9FBDE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitHoleNodeExample", "RabbitHoleNodeExample\RabbitHoleNodeExample.csproj", "{B3B2EAF5-2C12-4436-B104-EFF128945840}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4F0CE8B6-E7AB-4F9A-934A-E8869F9FBDE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F0CE8B6-E7AB-4F9A-934A-E8869F9FBDE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F0CE8B6-E7AB-4F9A-934A-E8869F9FBDE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3B2EAF5-2C12-4436-B104-EFF128945840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3B2EAF5-2C12-4436-B104-EFF128945840}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3B2EAF5-2C12-4436-B104-EFF128945840}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3B2EAF5-2C12-4436-B104-EFF128945840}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
