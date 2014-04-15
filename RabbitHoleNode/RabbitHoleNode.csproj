@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4F0CE8B6-E7AB-4F9A-934A-E8869F9FBDE2}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RabbitHoleNode</RootNamespace>
     <AssemblyName>RabbitHoleNode</AssemblyName>
@@ -69,6 +69,7 @@
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Node\IServiceNode.cs" />
     <Compile Include="Node\NodeCreationOptions.cs" />
+    <Compile Include="Node\NodeRunner.cs" />
     <Compile Include="Node\NodeStatus.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
