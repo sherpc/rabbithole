@@ -3,5 +3,9 @@
 ################################################################################
 
 /RabbitHoleNode/bin/Debug/RabbitHoleNode.vshost.exe
-/packages
-/RabbitHoleNode/obj/Debug
+/packages/*
+/RabbitHoleNode/obj/*
+/RabbitHoleNode/.nuget
+/RabbitHoleNode/bin
+/RabbitHoleNodeExample/*
+/RabbitHoleNodeExample/*

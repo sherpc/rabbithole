@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IService.cs" />
+    <Compile Include="Manager\NodeManager.cs" />
     <Compile Include="Node\IServiceNode.cs" />
     <Compile Include="Node\NodeCreationOptions.cs" />
     <Compile Include="Node\NodeRunner.cs" />
