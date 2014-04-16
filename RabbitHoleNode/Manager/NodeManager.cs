@@ -55,7 +55,7 @@ namespace RabbitHoleNode.Manager
 			return true;
 		}
 
-		public void CreateNode(NodeCreationOptions options, string args)
+		public void CreateNode(NodeSettings options, string args)
 		{
 			var psi = new ProcessStartInfo(_nodeExePath, args)
 			{

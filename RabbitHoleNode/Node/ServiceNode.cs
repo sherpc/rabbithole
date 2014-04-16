@@ -13,16 +13,11 @@ namespace RabbitHoleNode.Node
 		where TDestination : class
 		where TSource : class
 	{
-		private readonly int _maxTasks;
 		private readonly IService<TSource, TDestination> _service;
-		private readonly string _sourceQueue;
-		private readonly string _destinationQueue;
+		private readonly NodeSettings _nodeSettings;
+
 		public string Name { get; private set; }
 
-		/// <summary>
-		/// State notification period in seconds.
-		/// </summary>
-		private readonly int _stateNotificationPeriod;
 
 		private int _runningTasks;
 		private readonly IBus _bus;
@@ -30,31 +25,13 @@ namespace RabbitHoleNode.Node
 
 		private readonly object _lock;
 
-		public ServiceNode(int maxTasks, IService<TSource, TDestination> service, string sourceQueue, string destinationQueue, string nodeName, int stateNotificationPeriod)
-			: this()
-		{
-			_maxTasks = maxTasks;
-			_service = service;
-			_sourceQueue = sourceQueue;
-			_destinationQueue = destinationQueue;
-			Name = GenerateNodeName(service, nodeName);
-			_stateNotificationPeriod = stateNotificationPeriod;
-		}
-
-		public ServiceNode(IService<TSource, TDestination> service, NodeCreationOptions nodeCreationOptions)
-			: this()
+		public ServiceNode(IService<TSource, TDestination> service, NodeSettings nodeSettings)
 		{
 			_service = service;
+			_nodeSettings = nodeSettings;
 
-			_maxTasks = nodeCreationOptions.MaxTasks;
-			_sourceQueue = nodeCreationOptions.SourceQueue;
-			_destinationQueue = nodeCreationOptions.DestinationQueue;
-			Name = GenerateNodeName(service, nodeCreationOptions.NodeName);
-			_stateNotificationPeriod = nodeCreationOptions.StateNotificationPeriod;
-		}
+			Name = GenerateNodeName(service, nodeSettings.NodeName);
 
-		private ServiceNode()
-		{
 			_runningTasks = 0;
 			_bus = RabbitHelper.CreateBus();
 			_needShutdown = false;
@@ -63,7 +40,7 @@ namespace RabbitHoleNode.Node
 
 		public void Start()
 		{
-			_bus.Receive<TSource>(_sourceQueue, async message =>
+			_bus.Receive<TSource>(_nodeSettings.SourceQueue, async message =>
 			{
 				if (_needShutdown)
 					throw new ShutdownNeededException();
@@ -81,7 +58,10 @@ namespace RabbitHoleNode.Node
 
 					OnMessageReceived(message);
 					var results = await _service.Process(message);
-					OnCompleted(results);	
+					if (_nodeSettings.IsOutputNode())
+					{
+						PublishResults(results);		
+					}
 				}
 			});
 
@@ -90,7 +70,7 @@ namespace RabbitHoleNode.Node
 				while (!_needShutdown)
 				{
 					await NotifyTasksCount();
-					await Task.Delay(TimeSpan.FromSeconds(_stateNotificationPeriod));
+					await Task.Delay(TimeSpan.FromSeconds(_nodeSettings.StateNotificationPeriod));
 				}
 			};
 
@@ -127,12 +107,12 @@ namespace RabbitHoleNode.Node
 		/// <returns></returns>
 		private bool IncrementTasksCount()
 		{
-			if (_runningTasks >= _maxTasks)
+			if (_runningTasks >= _nodeSettings.MaxTasks)
 				return false;
 
 			lock (_lock)
 			{
-				if (_runningTasks >= _maxTasks)
+				if (_runningTasks >= _nodeSettings.MaxTasks)
 					return false;
 
 				Interlocked.Increment(ref _runningTasks);
@@ -147,20 +127,20 @@ namespace RabbitHoleNode.Node
 
 		private async Task NotifyTasksCount()
 		{
-			await _bus.PublishAsync(new NodeStatus(Name, NodeState.Running, _runningTasks, _maxTasks), "node.status." + Name);
+			await _bus.PublishAsync(new NodeStatus(Name, NodeState.Running, _runningTasks, _nodeSettings.MaxTasks), "node.status." + Name);
 		}
 
-		private void OnCompleted(IEnumerable<TDestination> results)
+		private void PublishResults(IEnumerable<TDestination> results)
 		{
 			Console.WriteLine("Processed message. Items:");
 			foreach (var result in results)
 			{
-				_bus.Send(_destinationQueue, result);
+				_bus.Send(_nodeSettings.DestinationQueue, result);
 				Console.WriteLine("\t--> {0}", result);
 			}
 		}
 
-		private void OnMessageReceived(TSource message)
+		private static void OnMessageReceived(TSource message)
 		{
 			Console.WriteLine("Got message: {0}", message);
 		}
@@ -170,7 +150,7 @@ namespace RabbitHoleNode.Node
 			_bus.Dispose();
 		}
 
-		private string GenerateNodeName(IService<TSource, TDestination> service, string name)
+		private static string GenerateNodeName(IService<TSource, TDestination> service, string name)
 		{
 			return String.IsNullOrWhiteSpace(name)
 				? String.Format("{0}#{1}", service.ServiceName.ToLowerInvariant(), Guid.NewGuid())

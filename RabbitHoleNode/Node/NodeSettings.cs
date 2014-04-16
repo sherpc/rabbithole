@@ -1,8 +1,9 @@
-﻿using CommandLine;
+﻿using System;
+using CommandLine;
 
 namespace RabbitHoleNode.Node
 {
-	public class NodeCreationOptions
+	public class NodeSettings
 	{
 		[Option('f', "from", Required = true, HelpText = "Source queue for node.")]
 		public string SourceQueue { get; set; }
@@ -22,7 +23,7 @@ namespace RabbitHoleNode.Node
 		[Option('s', "service", Required = true, HelpText = "Service class name. Must be in namespace, setted by -namespace.")]
 		public string ServiceName { get; set; }
 
-		[Option("namespace", DefaultValue = DefaultNamespace, HelpText = "Service namespace. Defaults to 'MK.Import.Domain.Services'.")]
+		[Option("namespace", Required = true, HelpText = "Service namespace.")]
 		public string ServiceNamespace { get; set; }
 
 		[Option("dto-from", Required = true, HelpText = "Type for source DTO.")]
@@ -32,5 +33,13 @@ namespace RabbitHoleNode.Node
 		public string DtoToType { get; set; }
 
 		private const string DefaultNamespace = "MK.Import.Domain.Services";
+
+		public bool IsOutputNode()
+		{
+			// Если не задан хотя бы один из параметров, нужных для
+			// выходной очереди, считаем, что нода ничего не производит
+			return !(String.IsNullOrWhiteSpace(DestinationQueue)
+			       || String.IsNullOrWhiteSpace(DtoToType));
+		}
 	}
 }
