@@ -6,7 +6,8 @@ namespace RabbitHoleNodeExample
 	{
 		static void Main(string[] args)
 		{
-			NodeRunner.RunNode(args);
+			var settings = OptionsHelper.GetOptionsFromConfig<NodeSettings>();
+			NodeRunner.RunNode(settings);
 		}
 	}
 }

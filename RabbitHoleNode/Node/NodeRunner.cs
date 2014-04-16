@@ -14,21 +14,21 @@ namespace RabbitHoleNode.Node
 				return;
 			}
 
-			settings.ServiceName = String.Format("{0}.{1}, MK.Import.Domain", settings.ServiceNamespace, settings.ServiceName);
-
 			settings.DtoFromType = String.Format("MK.Import.Domain.Dto.Messaging.{0}, MK.Import.Domain", settings.DtoFromType);
 			settings.DtoToType = String.Format("MK.Import.Domain.Dto.Messaging.{0}, MK.Import.Domain", settings.DtoToType);
 
 			RunNode(settings);
 		}
 
-		private static void RunNode(NodeSettings settings)
+		public static void RunNode(NodeSettings settings)
 		{
 			var serviceType = GetTypeFromString(settings.ServiceName);
 			var service = Activator.CreateInstance(serviceType, false);
 
 			var dtoFromType = GetTypeFromString(settings.DtoFromType);
-			var dtoToType = GetTypeFromString(settings.DtoToType);
+			var dtoToType = String.IsNullOrWhiteSpace(settings.DtoToType)
+				? dtoFromType	
+				: GetTypeFromString(settings.DtoToType);
 
 			var template = typeof(ServiceNode<,>);
 			var serviceNodeType = template.MakeGenericType(dtoFromType, dtoToType);
@@ -46,9 +46,8 @@ namespace RabbitHoleNode.Node
 			var type = Type.GetType(typeName, false, true);
 			if (type != null)
 				return type;
-			Console.WriteLine("Can't find type '{0}'.", typeName);
-			Environment.Exit(0);
-			return type;
+			var message = String.Format("Can't find type '{0}'.", typeName);
+			throw new ArgumentException(message);
 		}
 	}
 }
