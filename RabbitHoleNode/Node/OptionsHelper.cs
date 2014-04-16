@@ -19,17 +19,15 @@ namespace RabbitHoleNode.Node
 			var result = Activator.CreateInstance<T>();
 			foreach (var property in properties)
 			{
-				if (property.Option.Required)
+				object value = ConfigurationManager.AppSettings[property.Option.LongName];
+				if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
 				{
-					var value = ConfigurationManager.AppSettings[property.Option.LongName];
-					if (String.IsNullOrWhiteSpace(value))
+					if(property.Option.Required)
 						throw new ArgumentException("Can't found option with key '" + property.Option.LongName + "' in *.config.");
-					property.Property.SetValue(result, value);
+					value = property.Option.DefaultValue;
 				}
-				else
-				{
-					property.Property.SetValue(result, property.Option.DefaultValue);
-				}
+				
+				property.Property.SetValue(result, value);
 			}
 			return result;
 		}
