@@ -1,4 +1,5 @@
-﻿using RabbitHoleNode.Node;
+﻿using RabbitHoleNode;
+using RabbitHoleNode.Node;
 
 namespace RabbitHoleNodeExample
 {

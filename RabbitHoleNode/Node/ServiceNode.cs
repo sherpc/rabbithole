@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyNetQ;
 using RabbitHoleNode.Interfaces;
-using RabbitHoleNode.Logger;
 
 namespace RabbitHoleNode.Node
 {
@@ -155,14 +154,6 @@ namespace RabbitHoleNode.Node
 			return String.IsNullOrWhiteSpace(name)
 				? String.Format("{0}#{1}", service.ServiceName.ToLowerInvariant(), Guid.NewGuid())
 				: name;
-		}
-	}
-
-	public static class RabbitHelper
-	{
-		public static IBus CreateBus()
-		{
-			return RabbitHutch.CreateBus("host=localhost", register => register.Register<IEasyNetQLogger>(_ => new QueueLogger()));
 		}
 	}
 
