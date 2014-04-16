@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyNetQ;
@@ -48,7 +47,7 @@ namespace RabbitHoleNode.Node
 				{
 					await Task.Delay(1000);
 				}
-				using (Disposable.Create(DecrementTasksCount))
+				using (new Disposable(DecrementTasksCount))
 				{
 					if (_needShutdown)
 					{
@@ -126,7 +125,7 @@ namespace RabbitHoleNode.Node
 
 		private async Task NotifyTasksCount()
 		{
-			await _bus.PublishAsync(new NodeStatus(Name, NodeState.Running, _runningTasks, _nodeSettings.MaxTasks), "node.status." + Name);
+			await _bus.PublishAsync(new NodeStatus(Name, NodeState.Running, _runningTasks, _nodeSettings), "node.status." + Name);
 		}
 
 		private void PublishResults(IEnumerable<TDestination> results)
@@ -160,5 +159,20 @@ namespace RabbitHoleNode.Node
 	public class ShutdownNeededException : Exception
 	{
 		
+	}
+
+	public class Disposable : IDisposable
+	{
+		private readonly Action _dispose;
+
+		public Disposable(Action dispose)
+		{
+			_dispose = dispose;
+		}
+
+		public void Dispose()
+		{
+			_dispose();
+		}
 	}
 }

@@ -18,7 +18,7 @@ namespace RabbitHoleNode.Logger
 		public void ErrorWrite(string format, params object[] args)
 		{
 			//Console.ForegroundColor = ConsoleColor.Red;
-			Console.Write("ERROR: " + format, args);
+			Console.Write("ERROR: " + format);
 			//Console.ResetColor();
 		}
 

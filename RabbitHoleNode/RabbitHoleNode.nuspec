@@ -9,7 +9,7 @@
     <projectUrl>https://github.com/sherpc/rabbithole</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added RabbitHelper; Added PublishWithDelay() method.</releaseNotes>
+    <releaseNotes>Removed Rx dependency.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>c# rabbitmq</tags>
   </metadata>
