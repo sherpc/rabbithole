@@ -33,7 +33,12 @@ namespace RabbitHoleNode
 			var delayQueue = ((RabbitAdvancedBusExtended)bus.Advanced).QueueWithDelayDeclare(resultQueueName + "_delay", exchange.Name, perQueueTtl: (int)delay.TotalMilliseconds);
 			var resultQueue = bus.Advanced.QueueDeclare(resultQueueName);
 			bus.Advanced.Bind(exchange, resultQueue, "");
-			bus.Advanced.Publish(Exchange.GetDefault(), delayQueue.Name, false, false, new Message<T>(message));
+			
+			var messageWrapper = new Message<T>(message);
+			var properties = messageWrapper.Properties;
+			properties.DeliveryMode = 2;
+			messageWrapper.SetProperties(properties);
+			bus.Advanced.Publish(Exchange.GetDefault(), delayQueue.Name, false, false, messageWrapper);
 		}
 	}
 
